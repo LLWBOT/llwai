@@ -119,6 +119,9 @@ body {
     padding: 15px;
     text-align: center;
     border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #user-info {
@@ -127,6 +130,7 @@ body {
     justify-content: center;
     font-size: 1.2em;
     font-weight: bold;
+    flex-grow: 1;
 }
 
 #display-name {
@@ -140,6 +144,18 @@ body {
 }
 
 #edit-name-btn:hover {
+    color: #e0e0e0;
+}
+
+#close-chat-btn {
+    cursor: pointer;
+    color: #999;
+    font-size: 1.5em;
+    padding-right: 15px;
+    transition: color 0.3s;
+}
+
+#close-chat-btn:hover {
     color: #e0e0e0;
 }
 
