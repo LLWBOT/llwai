@@ -1,3 +1,4 @@
+
 body {
     font-family: Arial, sans-serif;
     background-color: #121212;
@@ -198,23 +199,74 @@ body {
     background-color: #45a049;
 }
 
-/* Styling for chat messages */
+/* --- New Chat Message Styling --- */
+.message-container {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 15px;
+    position: relative;
+    max-width: 80%;
+}
+
+.message-container.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.message-container.bot {
+    align-self: flex-start;
+    flex-direction: row;
+}
+
 .message {
     padding: 10px 15px;
     border-radius: 15px;
-    margin-bottom: 10px;
-    max-width: 80%;
     word-wrap: break-word;
+    max-width: 100%;
 }
 
-.user {
+.message-container.user .message {
     background-color: #2196F3;
     color: white;
-    align-self: flex-end;
 }
 
-.bot {
+.message-container.bot .message {
     background-color: #ffffff;
     color: #121212;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.2em;
+    margin: 0 10px;
+}
+
+.bot-name {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 5px;
     align-self: flex-start;
+}
+
+.timestamp {
+    position: absolute;
+    bottom: -15px;
+    font-size: 0.7em;
+    color: #999;
+}
+
+.message-container.user .timestamp {
+    left: 0;
+}
+
+.message-container.bot .timestamp {
+    right: 0;
 }
