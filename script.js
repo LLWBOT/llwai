@@ -7,7 +7,7 @@ const chatContainerDiv = document.getElementById('chat-container');
 const nameInput = document.getElementById('name-input');
 const displayName = document.getElementById('display-name');
 
-const backendUrl = "https://zeroth-ernesta-llwai1-466fcd9e.koyeb.app/chat"; 
+const backendUrl = "https://zeroth-ernesta-llwai1-466fcd9e.koyeb.app"; 
 let userName = localStorage.getItem('userName') || null;
 
 // Store a random color for the user's logo for the entire chat session
