@@ -30,11 +30,22 @@ function showChat() {
     userInput.focus();
 }
 
+function startChat(name = null) {
+    showChat();
+    chatBox.innerHTML = '';
+    
+    if (name) {
+        displayName.innerText = name;
+        appendMessage(`Hey, ${name}! LLW AI is here to help.`, 'bot');
+    } else {
+        displayName.innerText = "User";
+        appendMessage("Hey! LLW AI is here to help.", 'bot');
+    }
+}
+
 window.onload = () => {
     if (userName) {
-        showChat();
-        displayName.innerText = userName;
-        appendMessage(`Hey, ${userName}! LLW AI is here to help.`, 'bot');
+        startChat(userName);
     } else {
         showHomepage();
     }
@@ -52,15 +63,7 @@ function submitOrSkipName(skip = false) {
         localStorage.setItem('userName', userName);
     }
     
-    if (userName) {
-        displayName.innerText = userName;
-        appendMessage(`Hey, ${userName}! LLW AI is here to help.`, 'bot');
-    } else {
-        displayName.innerText = "User";
-        appendMessage("Hey! LLW AI is here to help.", 'bot');
-    }
-    
-    showChat();
+    startChat(userName);
 }
 
 function editName() {
@@ -74,6 +77,10 @@ function editName() {
     }
 }
 
+function closeChat() {
+    showHomepage();
+}
+
 async function sendMessage() {
     const message = userInput.value;
     if (message.trim() === '') return;
@@ -81,7 +88,8 @@ async function sendMessage() {
     appendMessage(message, 'user');
     userInput.value = '';
     
-    const typingMessage = appendMessage("...", 'bot');
+    // The key change: The temporary bot message now explicitly says "Loading..."
+    const loadingMessage = appendMessage("Loading...", 'bot');
 
     try {
         const response = await fetch(backendUrl + '/chat', {
@@ -93,7 +101,7 @@ async function sendMessage() {
         });
 
         const data = await response.json();
-        chatBox.removeChild(typingMessage);
+        chatBox.removeChild(loadingMessage);
         
         if (data.foundName) {
             userName = data.foundName;
@@ -106,7 +114,7 @@ async function sendMessage() {
             appendMessage("Error: " + data.error, 'bot');
         }
     } catch (error) {
-        chatBox.removeChild(typingMessage);
+        chatBox.removeChild(loadingMessage);
         appendMessage("An error occurred. Please try again.", 'bot');
         console.error('Error:', error);
     }
