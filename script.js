@@ -13,9 +13,6 @@ let userName = localStorage.getItem('userName') || null;
 // Store a random color for the user's logo for the entire chat session
 let userLogoColor = null;
 
-// NEW: Array to store the full conversation history
-let chatHistory = [];
-
 function showHomepage() {
     homepageDiv.style.display = 'flex';
     nameEntryDiv.style.display = 'none';
@@ -49,9 +46,6 @@ function getRandomColor() {
 function startChat(name = null) {
     showChat();
     chatBox.innerHTML = '';
-
-    // NEW: Clear chat history on start
-    chatHistory = [];
 
     // Set a new random color for the user logo at the start of each chat
     userLogoColor = getRandomColor();
@@ -118,16 +112,13 @@ async function sendMessage(messageFromStart = null) {
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     try {
-        // NEW: Add the user's message to the chat history before sending
-        chatHistory.push({ role: 'user', parts: [{ text: message }] });
-
         const response = await fetch(backendUrl + '/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ 
-                history: chatHistory, // NEW: Send the full chat history
+                message: message, 
                 userName: userName,
                 timezone: userTimezone
             }),
@@ -180,9 +171,6 @@ function appendMessage(message, sender) {
         botName.innerText = "LLW AI";
         messageContainer.appendChild(botName);
         messageContainer.appendChild(messageElement);
-        
-        // NEW: Add the bot's message to the chat history
-        chatHistory.push({ role: 'model', parts: [{ text: message }] });
     }
     
     messageContainer.appendChild(timestampElement);
