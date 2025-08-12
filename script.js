@@ -7,7 +7,7 @@ const chatContainerDiv = document.getElementById('chat-container');
 const nameInput = document.getElementById('name-input');
 const displayName = document.getElementById('display-name');
 
-const backendUrl = "https://zeroth-ernesta-llwai1-466fcd9e.koyeb.app"; 
+const backendUrl = "https://zeroth-ernesta-llwai1-466fcd9e.koyeb.app";
 let userName = localStorage.getItem('userName') || null;
 
 // Store a random color for the user's logo for the entire chat session
@@ -46,17 +46,18 @@ function getRandomColor() {
 function startChat(name = null) {
     showChat();
     chatBox.innerHTML = '';
-    
+
     // Set a new random color for the user logo at the start of each chat
     userLogoColor = getRandomColor();
     
     if (name) {
         displayName.innerText = name;
-        appendMessage(`Hey, ${name}! LLW AI is here to help.`, 'bot');
     } else {
         displayName.innerText = "User";
-        appendMessage("Hey! LLW AI is here to help.", 'bot');
     }
+    
+    // New logic: Send a "hi" message to get a dynamic greeting from the backend
+    sendMessage('hi');
 }
 
 window.onload = () => {
@@ -65,12 +66,6 @@ window.onload = () => {
     } else {
         showHomepage();
     }
-}
-
-function showNameEntry() {
-    homepageDiv.style.display = 'none';
-    nameEntryDiv.style.display = 'flex';
-    nameInput.focus();
 }
 
 function submitOrSkipName(skip = false) {
@@ -101,11 +96,14 @@ function closeChat() {
     displayName.innerText = "User";
 }
 
-async function sendMessage() {
-    const message = userInput.value;
+async function sendMessage(messageFromStart = null) {
+    const message = messageFromStart || userInput.value;
     if (message.trim() === '') return;
-
-    appendMessage(message, 'user');
+    
+    if (!messageFromStart) {
+        appendMessage(message, 'user');
+    }
+    
     userInput.value = '';
     
     const loadingMessage = appendMessage("Loading...", 'bot');
