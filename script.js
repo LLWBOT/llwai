@@ -96,21 +96,23 @@ function closeChat() {
     displayName.innerText = "User";
 }
 
-// New function to handle both location and message sending
-function getLocationAndSendMessage() {
-    const message = userInput.value;
+async function sendMessage(messageFromStart = null) {
+    const message = messageFromStart || userInput.value;
     if (message.trim() === '') return;
-
-    appendMessage(message, 'user');
+    
+    if (!messageFromStart) {
+        appendMessage(message, 'user');
+    }
+    
     userInput.value = '';
-
+    
     const loadingMessage = appendMessage("Loading...", 'bot');
 
-    const sendData = (location = null) => {
-        // Get user's timezone for more accurate responses
-        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        
-        fetch(backendUrl + '/chat', {
+    // Get user's timezone for more accurate responses
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    try {
+        const response = await fetch(backendUrl + '/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -118,52 +120,29 @@ function getLocationAndSendMessage() {
             body: JSON.stringify({ 
                 message: message, 
                 userName: userName,
-                timezone: userTimezone,
-                location: location 
+                timezone: userTimezone
             }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            chatBox.removeChild(loadingMessage.parentElement);
-            if (data.foundName) {
-                userName = data.foundName;
-                localStorage.setItem('userName', userName);
-                displayName.innerText = userName;
-                appendMessage(data.response, 'bot');
-            } else if (data.response) {
-                appendMessage(data.response, 'bot');
-            } else {
-                appendMessage("Error: " + data.error, 'bot');
-            }
-        })
-        .catch(error => {
-            chatBox.removeChild(loadingMessage.parentElement);
-            appendMessage("An error occurred. Please try again.", 'bot');
-            console.error('Error:', error);
         });
-    };
 
-    if (navigator.geolocation && message.toLowerCase().includes("where am i")) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const locationData = {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                };
-                sendData(locationData);
-            },
-            (error) => {
-                console.error("Geolocation error:", error);
-                // Send data without location if permission is denied
-                sendData(null);
-            }
-        );
-    } else {
-        // Just send data without location
-        sendData(null);
+        const data = await response.json();
+        chatBox.removeChild(loadingMessage.parentElement);
+        
+        if (data.foundName) {
+            userName = data.foundName;
+            localStorage.setItem('userName', userName);
+            displayName.innerText = userName;
+            appendMessage(data.response, 'bot');
+        } else if (data.response) {
+            appendMessage(data.response, 'bot');
+        } else {
+            appendMessage("Error: " + data.error, 'bot');
+        }
+    } catch (error) {
+        chatBox.removeChild(loadingMessage.parentElement);
+        appendMessage("An error occurred. Please try again.", 'bot');
+        console.error('Error:', error);
     }
 }
-
 
 function appendMessage(message, sender) {
     const messageContainer = document.createElement('div');
@@ -203,6 +182,6 @@ function appendMessage(message, sender) {
 
 userInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-        getLocationAndSendMessage();
+        sendMessage();
     }
 });
