@@ -96,46 +96,74 @@ function closeChat() {
     displayName.innerText = "User";
 }
 
-async function sendMessage(messageFromStart = null) {
-    const message = messageFromStart || userInput.value;
+// New function to handle both location and message sending
+function getLocationAndSendMessage() {
+    const message = userInput.value;
     if (message.trim() === '') return;
-    
-    if (!messageFromStart) {
-        appendMessage(message, 'user');
-    }
-    
+
+    appendMessage(message, 'user');
     userInput.value = '';
-    
+
     const loadingMessage = appendMessage("Loading...", 'bot');
 
-    try {
-        const response = await fetch(backendUrl + '/chat', {
+    const sendData = (location = null) => {
+        // Get user's timezone for more accurate responses
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
+        fetch(backendUrl + '/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message: message, userName: userName }),
+            body: JSON.stringify({ 
+                message: message, 
+                userName: userName,
+                timezone: userTimezone,
+                location: location 
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            chatBox.removeChild(loadingMessage.parentElement);
+            if (data.foundName) {
+                userName = data.foundName;
+                localStorage.setItem('userName', userName);
+                displayName.innerText = userName;
+                appendMessage(data.response, 'bot');
+            } else if (data.response) {
+                appendMessage(data.response, 'bot');
+            } else {
+                appendMessage("Error: " + data.error, 'bot');
+            }
+        })
+        .catch(error => {
+            chatBox.removeChild(loadingMessage.parentElement);
+            appendMessage("An error occurred. Please try again.", 'bot');
+            console.error('Error:', error);
         });
+    };
 
-        const data = await response.json();
-        chatBox.removeChild(loadingMessage.parentElement);
-        
-        if (data.foundName) {
-            userName = data.foundName;
-            localStorage.setItem('userName', userName);
-            displayName.innerText = userName;
-            appendMessage(data.response, 'bot');
-        } else if (data.response) {
-            appendMessage(data.response, 'bot');
-        } else {
-            appendMessage("Error: " + data.error, 'bot');
-        }
-    } catch (error) {
-        chatBox.removeChild(loadingMessage.parentElement);
-        appendMessage("An error occurred. Please try again.", 'bot');
-        console.error('Error:', error);
+    if (navigator.geolocation && message.toLowerCase().includes("where am i")) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const locationData = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                };
+                sendData(locationData);
+            },
+            (error) => {
+                console.error("Geolocation error:", error);
+                // Send data without location if permission is denied
+                sendData(null);
+            }
+        );
+    } else {
+        // Just send data without location
+        sendData(null);
     }
 }
+
 
 function appendMessage(message, sender) {
     const messageContainer = document.createElement('div');
@@ -175,6 +203,6 @@ function appendMessage(message, sender) {
 
 userInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-        sendMessage();
+        getLocationAndSendMessage();
     }
 });
