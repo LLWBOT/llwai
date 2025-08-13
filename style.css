@@ -111,8 +111,8 @@ body {
 /* --- Chat Container Styling --- */
 #chat-container {
     flex-grow: 1;
-    flex-direction: column;
-    display: flex; /* ADDED THIS LINE */
+    display: flex; /* This tells the container to be a flexible box */
+    flex-direction: column; /* This stacks its children vertically */
 }
 
 #header-container {
@@ -199,7 +199,7 @@ body {
     background-color: #45a049;
 }
 
-/* --- New Chat Message Styling --- */
+/* --- Chat Message Styling --- */
 .message-container {
     display: flex;
     align-items: flex-end;
