@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     background-color: #121212;
     color: #e0e0e0;
     display: flex;
@@ -61,6 +63,73 @@ body {
     margin-right: 10px;
 }
 
+#saved-chats-section {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 400px;
+}
+
+#saved-chats-section h2 {
+    color: #4CAF50;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+#saved-chats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.saved-chat-item {
+    background-color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.saved-chat-item:hover {
+    background-color: #444;
+}
+
+.chat-item-text {
+    font-size: 1.1em;
+    color: #e0e0e0;
+}
+
+.chat-item-actions {
+    display: flex;
+    align-items: center;
+}
+
+.resume-chat-btn, .delete-chat-btn {
+    background: none;
+    border: none;
+    color: #4CAF50;
+    font-size: 1em;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: color 0.3s;
+}
+
+.delete-chat-btn {
+    color: #F44336;
+}
+
+.resume-chat-btn:hover {
+    color: #45a049;
+}
+
+.delete-chat-btn:hover {
+    color: #d32f2f;
+}
+
 /* --- Name Entry Screen Styling --- */
 .name-prompt {
     font-size: 1.5em;
@@ -111,8 +180,8 @@ body {
 /* --- Chat Container Styling --- */
 #chat-container {
     flex-grow: 1;
-    display: flex; /* This tells the container to be a flexible box */
-    flex-direction: column; /* This stacks its children vertically */
+    display: flex;
+    flex-direction: column;
 }
 
 #header-container {
@@ -125,13 +194,28 @@ body {
     align-items: center;
 }
 
+#chat-title-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#display-chat-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
 #user-info {
     display: flex;
     align-items: center;
-    justify-content: center;
     font-size: 1.2em;
     font-weight: bold;
-    flex-grow: 1;
+    margin-left: auto;
 }
 
 #display-name {
@@ -148,15 +232,16 @@ body {
     color: #e0e0e0;
 }
 
-#close-chat-btn {
-    cursor: pointer;
-    color: #999;
+#back-to-home-btn {
+    margin-left: 5px;
     font-size: 1.5em;
-    padding-right: 15px;
-    transition: color 0.3s;
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
-#close-chat-btn:hover {
+#back-to-home-btn:hover {
     color: #e0e0e0;
 }
 
@@ -172,6 +257,7 @@ body {
     display: flex;
     padding: 10px;
     border-top: 1px solid #333;
+    align-items: flex-end;
 }
 
 #user-input {
@@ -182,27 +268,31 @@ body {
     background-color: #333;
     color: #e0e0e0;
     outline: none;
+    margin-right: 10px;
+    resize: none; /* Disable manual resizing */
+    overflow-y: hidden; /* Hide scrollbar for automatic resizing */
+    line-height: 1.5em; /* Adjust for better text spacing */
+    min-height: 1.5em; /* Ensure a minimum height for one line of text */
 }
 
-#send-button {
-    background-color: #4CAF50;
-    color: white;
+.input-icon-btn {
+    background-color: transparent;
     border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    margin-left: 10px;
+    color: #999;
+    font-size: 1.5em;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: color 0.3s;
+    padding: 5px;
 }
 
-#send-button:hover {
-    background-color: #45a049;
+.input-icon-btn:hover {
+    color: #e0e0e0;
 }
 
 /* --- Chat Message Styling --- */
 .message-container {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     margin-bottom: 15px;
     position: relative;
     max-width: 80%;
@@ -223,6 +313,7 @@ body {
     border-radius: 15px;
     word-wrap: break-word;
     max-width: 100%;
+    position: relative;
 }
 
 .message-container.user .message {
@@ -270,4 +361,28 @@ body {
 
 .message-container.bot .timestamp {
     right: 0;
+}
+
+.copy-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 0.8em;
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.message:hover .copy-button {
+    opacity: 1;
+}
+
+.message-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-top: 5px;
 }
